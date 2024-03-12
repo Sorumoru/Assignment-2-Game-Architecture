@@ -32,10 +32,10 @@ class Arkanoid: SCNScene {
         background.contents = UIColor.black // Set the background colour to black
         
         setupCamera()
-        
+        seeCenter()
         // Add the ball and the brick
         addBall()
-        addBrick()
+        addBrickGrid(rows: 5, columns: 7, spacing: 1)
         
         // Initialize the Box2D object
         box2D = CBox2D()
@@ -48,6 +48,29 @@ class Arkanoid: SCNScene {
         
     }
     
+    
+    func seeCenter() {
+        let theBall = SCNNode(geometry: SCNSphere(radius: 1))
+        theBall.name = "Ball2"
+        theBall.geometry?.firstMaterial?.diffuse.contents = UIColor.blue
+        theBall.position = SCNVector3(0, 0, 0)
+        rootNode.addChildNode(theBall)
+        let theBall3 = SCNNode(geometry: SCNSphere(radius: 1))
+        theBall3.name = "Ball3"
+        theBall3.geometry?.firstMaterial?.diffuse.contents = UIColor.yellow
+        theBall3.position = SCNVector3(5, 0, 0)
+        rootNode.addChildNode(theBall3)
+        let theBall4 = SCNNode(geometry: SCNSphere(radius: 1))
+        theBall4.name = "Ball4"
+        theBall4.geometry?.firstMaterial?.diffuse.contents = UIColor.white
+        theBall4.position = SCNVector3(0, 5, 0)
+        rootNode.addChildNode(theBall4)
+        let theBall5 = SCNNode(geometry: SCNSphere(radius: 1))
+        theBall5.name = "Ball5"
+        theBall5.geometry?.firstMaterial?.diffuse.contents = UIColor.purple
+        theBall5.position = SCNVector3(0, 0, 5)
+        rootNode.addChildNode(theBall5)
+    }
     
     // Function to setup the camera node
     func setupCamera() {
@@ -63,15 +86,31 @@ class Arkanoid: SCNScene {
     }
     
     
-    func addBrick() {
+    func addBrickGrid(rows: Int, columns: Int, spacing: Float) {
+        let brickWidth: Float = Float(BRICK_WIDTH)
+        let brickHeight: Float = Float(BRICK_HEIGHT)
         
-        let theBrick = SCNNode(geometry: SCNBox(width: CGFloat(BRICK_WIDTH), height: CGFloat(BRICK_HEIGHT), length: 1, chamferRadius: 0))
-        theBrick.name = "Brick"
-        theBrick.geometry?.firstMaterial?.diffuse.contents = UIColor.red
-        theBrick.position = SCNVector3(Int(BRICK_POS_X), Int(BRICK_POS_Y), 0)
-        rootNode.addChildNode(theBrick)
+        let totalWidth = Float(columns) * brickWidth + Float(columns - 1) * spacing
+        let totalHeight = Float(rows) * brickHeight + Float(rows - 1) * spacing
         
+        let startX: Float = -(totalWidth / 2)
+        let startY: Float = (totalHeight / 2) + 100
+        
+        for row in 0..<rows {
+            for column in 0..<columns {
+                let brick = SCNNode(geometry: SCNBox(width: CGFloat(brickWidth), height: CGFloat(brickHeight), length: 1, chamferRadius: 0))
+                brick.name = "Brick \(row)\(column)"
+                brick.geometry?.firstMaterial?.diffuse.contents = UIColor.red
+                
+                let x = startX + Float(column) * (brickWidth + spacing)
+                let y = startY - Float(row) * (brickHeight + spacing)
+                
+                brick.position = SCNVector3(x, y, 0)
+                rootNode.addChildNode(brick)
+            }
+        }
     }
+
     
     
     func addBall() {
@@ -113,21 +152,21 @@ class Arkanoid: SCNScene {
         //        print("Ball pos: \(String(describing: theBall?.position.x)) \(String(describing: theBall?.position.y))")
         
         // Get brick position and update brick node
-        let brickPos = UnsafePointer(box2D.getObject("Brick"))
-        let theBrick = rootNode.childNode(withName: "Brick", recursively: true)
-        if (brickPos != nil) {
-            
-            // The brick is visible, so set the position
-            theBrick?.position.x = (brickPos?.pointee.loc.x)!
-            theBrick?.position.y = (brickPos?.pointee.loc.y)!
-            //            print("Brick pos: \(String(describing: theBrick?.position.x)) \(String(describing: theBrick?.position.y))")
-            
-        } else {
-            
-            // The brick has disappeared, so hide it
-            theBrick?.isHidden = true
-            
-        }
+//        let brickPos = UnsafePointer(box2D.getObject("Brick"))
+//        let theBrick = rootNode.childNode(withName: "Brick", recursively: true)
+//        if (brickPos != nil) {
+//            
+//            // The brick is visible, so set the position
+//            theBrick?.position.x = (brickPos?.pointee.loc.x)!
+//            theBrick?.position.y = (brickPos?.pointee.loc.y)!
+//            //            print("Brick pos: \(String(describing: theBrick?.position.x)) \(String(describing: theBrick?.position.y))")
+//            
+//        } else {
+//            
+//            // The brick has disappeared, so hide it
+//            theBrick?.isHidden = true
+//            
+//        }
         
     }
     

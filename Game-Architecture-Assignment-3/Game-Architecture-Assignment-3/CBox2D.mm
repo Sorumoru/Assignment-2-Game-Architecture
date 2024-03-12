@@ -66,6 +66,10 @@ public:
     
 };
 
+struct BrickPosition {
+    float x;
+    float y;
+};
 
 #pragma mark - CBox2D
 
@@ -89,7 +93,7 @@ public:
 
     // Logit for this particular "game"
     bool ballHitBrick;  // register that the ball hit the break
-    bool ballLaunched;  // register that the user has launched the ball
+        bool ballLaunched;  // register that the user has launched the ball
     
 }
 @end
@@ -258,8 +262,8 @@ public:
     // Set up the body definition and create the body from it
     b2BodyDef bodyDef;
     b2Body *theObject;
-    //bodyDef.type = b2_dynamicBody;
-    bodyDef.type = b2_staticBody; // change added object to a static body - Jun https://box2d.org/documentation/md__d_1__git_hub_box2d_docs_dynamics.html
+    bodyDef.type = b2_dynamicBody;
+    //bodyDef.type = b2_staticBody; // change added object to a static body - Jun https://box2d.org/documentation/md__d_1__git_hub_box2d_docs_dynamics.html
     bodyDef.position.Set(newObj->loc.x, newObj->loc.y);
     theObject = world->CreateBody(&bodyDef);
     if (!theObject) return;
@@ -280,7 +284,7 @@ public:
     switch (newObj->objType) {
             
         case ObjTypeBox:
-            
+            bodyDef.type = b2_staticBody;
             dynamicBox.SetAsBox(BRICK_WIDTH/2, BRICK_HEIGHT/2);
             fixtureDef.shape = &dynamicBox;
             fixtureDef.density = 1.0f;

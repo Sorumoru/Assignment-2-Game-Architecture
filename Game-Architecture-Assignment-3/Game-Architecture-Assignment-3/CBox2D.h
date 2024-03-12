@@ -18,7 +18,7 @@
 
 #define BRICK_POS_X         0
 #define BRICK_POS_Y         90
-#define BRICK_WIDTH         20.0f
+#define BRICK_WIDTH         15.0f
 #define BRICK_HEIGHT        5.0f
 #define BRICK_WAIT            1.0f
 #define BALL_POS_X            0

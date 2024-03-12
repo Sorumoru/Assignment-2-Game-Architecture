@@ -11,11 +11,13 @@ import SceneKit
 
 class GameViewController: UIViewController {
 
+    let scene = Arkanoid()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
         // create a new scene
-        let scene = Arkanoid()
+        //let scene = Arkanoid()
         
         // retrieve the SCNView
         let scnView = self.view as! SCNView
@@ -28,5 +30,16 @@ class GameViewController: UIViewController {
         
         // show statistics such as fps and timing information
         scnView.showsStatistics = true
+        
+        // add a tap gesture recognizer
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(handleTap(_:)))
+        tapGesture.numberOfTapsRequired = 2
+        scnView.addGestureRecognizer(tapGesture)
+        
+    }
+    
+    @objc
+    func handleTap(_ gestureRecognize: UIGestureRecognizer) {
+        scene.handleDoubleTap()
     }
 }
