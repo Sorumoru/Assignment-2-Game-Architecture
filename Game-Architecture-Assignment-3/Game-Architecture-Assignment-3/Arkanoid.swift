@@ -19,7 +19,8 @@ class Arkanoid: SCNScene {
     
     private var box2D: CBox2D!                      // Points to Objective-C++ wrapper for C++ Box2D library
     
-    private var xBound: Float = 40                  // Manually set x bound for screen edges for now
+    private var xBound: Float = 65                  // Width (x-value) from center of screen (0,0)
+    private var yBound: Float = 225                 // Height (y-value) from center of screen (0,0)
     private var paddleMoveSpeed: Float = 0.2
     
     // Catch if initializer in init() fails
@@ -39,7 +40,7 @@ class Arkanoid: SCNScene {
         // Add the ball and the brick
         addBall()
         addPaddle()
-        
+        addWalls()
         // Initialize the Box2D object
         box2D = CBox2D()
         //        box2D.helloWorld()  // If you want to test the HelloWorld example of Box2D
@@ -144,6 +145,34 @@ class Arkanoid: SCNScene {
         rootNode.addChildNode(paddleNode)
     }
     
+    func addWalls() {
+        let yOffset: Float = 100
+        let wallThickness: CGFloat = 1.0
+        let wallHeight: CGFloat = 250.0
+        
+        // Right wall
+        let rightWall = SCNNode(geometry: SCNBox(width: wallThickness, height: wallHeight, length: 1.0, chamferRadius: 0))
+        rightWall.name = "RightWall"
+        rightWall.position = SCNVector3(xBound + Float(wallThickness) / 2, yOffset, 0)
+        rightWall.geometry?.firstMaterial?.diffuse.contents = UIColor.gray
+        rootNode.addChildNode(rightWall)
+        
+        // Left wall
+        let leftWall = SCNNode(geometry: SCNBox(width: wallThickness, height: wallHeight, length: 1.0, chamferRadius: 0))
+        leftWall.name = "LeftWall"
+        leftWall.position = SCNVector3(-xBound - Float(wallThickness) / 2, yOffset, 0)
+        leftWall.geometry?.firstMaterial?.diffuse.contents = UIColor.gray
+        rootNode.addChildNode(leftWall)
+        
+        // Top wall
+        let topWallWidth:CGFloat = 130
+        let topWall = SCNNode(geometry: SCNBox(width: topWallWidth, height: wallThickness, length: 1.0, chamferRadius: 0))
+        topWall.name = "TopWall"
+        topWall.position = SCNVector3(0, yBound, 0)
+        topWall.geometry?.firstMaterial?.diffuse.contents = UIColor.gray
+        rootNode.addChildNode(topWall)
+    }
+    
     // Simple game loop that gets called each frame
     @MainActor
     @objc
@@ -230,12 +259,12 @@ class Arkanoid: SCNScene {
         let newPositionX = paddleNode.position.x + translationX * paddleMoveSpeed
 
         // Set manual clamp values here
-        let minX: Float = -xBound
-        let maxX: Float = xBound
+        let minX: Float = -xBound + PADDLE_WIDTH / 2
+        let maxX: Float = xBound - PADDLE_WIDTH / 2
         
         // Clamp the new position within the manual clamp values
         let clampedPositionX = min(max(minX, newPositionX), maxX)
-        
+
         // Apply the clamped position
         box2D.updatePaddlePosition(clampedPositionX)
         
