@@ -76,7 +76,7 @@ class Arkanoid: SCNScene {
     
     // Function to setup the camera node
     func setupCamera() {
-        
+        // WARNING: do not change >:(
         let camera = SCNCamera() // Create Camera object
         camera.zFar = 1000
         camera.usesOrthographicProjection = true

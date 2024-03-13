@@ -48,7 +48,7 @@ public:
             
             // Use contact->GetFixtureA()->GetBody() to get the body that was hit
             b2Body* bodyA = contact->GetFixtureA()->GetBody();
-            
+            b2Body* bodyB = contact->GetFixtureB()->GetBody();
             // Get the PhysicsObject as the user data, and then the CBox2D object in that struct
             // This is needed because this handler may be running in a different thread and this
             //  class does not know about the CBox2D that's running the physics
