@@ -85,7 +85,6 @@ struct PhysicsObject {
 -(struct PhysicsObject *) GetObject:(const char *)name;                     // Get a physics object by name
 -(void) Reset;                                                              // Reset Box2D
 @property (nonatomic, assign) BOOL ballLaunched;
-@property (nonatomic, strong) NSMutableArray *hitStrings;  // List of hit strings
 
 @end
 

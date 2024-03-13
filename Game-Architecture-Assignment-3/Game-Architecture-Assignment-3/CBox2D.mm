@@ -11,6 +11,7 @@
 #include <stdio.h>
 #include <map>
 #include <string>
+#include <queue>
 
 
 // Some Box2D engine paremeters
@@ -83,7 +84,7 @@ public:
     
     // Map to keep track of physics object to communicate with the renderer
     std::map<std::string, struct PhysicsObject *> physicsObjects;
-    std::vector<std::string> hitLists;
+    std::queue<std::string> hitLists;
 
 #ifdef USE_HELLO_WORLD
     b2BodyDef *groundBodyDef;
@@ -231,16 +232,16 @@ public:
     
     // Destroy every physicsObject that is a brick (objTypeBox) in the hit list
     //TODO: USE STD::QUEUE INSTEAD. -Jas
-    std::sort(hitLists.begin(), hitLists.end());
-    for (const auto& str : hitLists) {
+    //std::sort(hitLists.begin(), hitLists.end());
+    while (!hitLists.empty()) {
+        std::string str = hitLists.front();
         printf("destroying this %s\n", str.c_str());
         struct PhysicsObject *destroyThis = physicsObjects[str];
-        hitLists.erase(std::remove(hitLists.begin(), hitLists.end(), str), hitLists.end());
+        hitLists.pop(); // Remove the front element
         if (destroyThis->objType == ObjTypeBox) {
             world->DestroyBody(((b2Body *)destroyThis->b2ShapePtr));
             delete destroyThis;
             physicsObjects.erase(str);
-            
         }
     }
     
@@ -262,8 +263,7 @@ public:
 
     // Convert const char* to std::string
     std::string physicsObjNameString(physicsObjNameCString);
-    //[self.hitStrings addObject:physicsObjName];
-    hitLists.push_back(physicsObjNameString);
+    hitLists.push(physicsObjNameString);
     
 }
 
@@ -275,7 +275,7 @@ public:
         ballLaunched = true;
         // Apply a force (since the ball is set up not to be affected by gravity)
         struct PhysicsObject *theBall = physicsObjects["Ball"];
-        ((b2Body *)theBall->b2ShapePtr)->ApplyLinearImpulse(b2Vec2(0, BALL_VELOCITY),
+        ((b2Body *)theBall->b2ShapePtr)->ApplyLinearImpulse(b2Vec2(BALL_VELOCITY/3, BALL_VELOCITY),
                                                             ((b2Body *)theBall->b2ShapePtr)->GetPosition(),
                                                             true);
         ((b2Body *)theBall->b2ShapePtr)->SetActive(true);
