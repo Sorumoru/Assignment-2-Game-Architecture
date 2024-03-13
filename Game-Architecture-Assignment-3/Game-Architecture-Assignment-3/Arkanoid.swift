@@ -174,6 +174,7 @@ class Arkanoid: SCNScene {
             theBall.position.x = (ballPos?.pointee.loc.x)!
             theBall.position.y = (ballPos?.pointee.loc.y)!
         } else {
+            // Move the ball with the paddle and set the box2D ball position directly
             theBall.position.x = paddleNode.position.x
             theBall.position.y = paddleNode.position.y + BALL_RADIUS * 2
             box2D.moveBall(theBall.position.x, andY: theBall.position.y)
