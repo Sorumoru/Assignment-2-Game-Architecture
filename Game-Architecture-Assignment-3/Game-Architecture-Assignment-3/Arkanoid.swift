@@ -36,7 +36,7 @@ class Arkanoid: SCNScene {
         background.contents = UIColor.black // Set the background colour to black
         
         setupCamera()
-        seeCenter()
+        
         // Add the ball and the brick
         addBall()
         addPaddle()
@@ -50,30 +50,7 @@ class Arkanoid: SCNScene {
         updater.add(to: RunLoop.main, forMode: RunLoop.Mode.default)
         addBrickGrid()
     }
-    
-    
-    func seeCenter() {
-        let theBall = SCNNode(geometry: SCNSphere(radius: 1))
-        theBall.name = "Ball2"
-        theBall.geometry?.firstMaterial?.diffuse.contents = UIColor.blue
-        theBall.position = SCNVector3(0, 0, 0)
-        rootNode.addChildNode(theBall)
-        let theBall3 = SCNNode(geometry: SCNSphere(radius: 1))
-        theBall3.name = "Ball3"
-        theBall3.geometry?.firstMaterial?.diffuse.contents = UIColor.yellow
-        theBall3.position = SCNVector3(5, 0, 0)
-        rootNode.addChildNode(theBall3)
-        let theBall4 = SCNNode(geometry: SCNSphere(radius: 1))
-        theBall4.name = "Ball4"
-        theBall4.geometry?.firstMaterial?.diffuse.contents = UIColor.white
-        theBall4.position = SCNVector3(0, 5, 0)
-        rootNode.addChildNode(theBall4)
-        let theBall5 = SCNNode(geometry: SCNSphere(radius: 1))
-        theBall5.name = "Ball5"
-        theBall5.geometry?.firstMaterial?.diffuse.contents = UIColor.purple
-        theBall5.position = SCNVector3(0, 0, 5)
-        rootNode.addChildNode(theBall5)
-    }
+
     
     // Function to setup the camera node
     func setupCamera() {
@@ -110,8 +87,8 @@ class Arkanoid: SCNScene {
                 brick.name = "Brick (\(row), \(column))"
                 brick.geometry?.firstMaterial?.diffuse.contents = UIColor.red
                 let brickPos = UnsafePointer(box2D.getObject(brick.name))
-//                let x = startX + Float(column) * (brickWidth + spacing)
-//                let y = startY - Float(row) * (brickHeight + spacing)
+                //                let x = startX + Float(column) * (brickWidth + spacing)
+                //                let y = startY - Float(row) * (brickHeight + spacing)
                 brick.position.x = (brickPos?.pointee.loc.x)!
                 brick.position.y = (brickPos?.pointee.loc.y)!
                 //brick.position = SCNVector3(x, y, 0)
@@ -123,7 +100,7 @@ class Arkanoid: SCNScene {
         }
         //box2D.createBrickPhysics(brickPositions)
     }
-
+    
     
     
     func addBall() {
@@ -190,12 +167,12 @@ class Arkanoid: SCNScene {
         
         // Ensure ball and paddle nodes exist
         guard let theBall = rootNode.childNode(withName: "Ball", recursively: true),
-                  let paddleNode = rootNode.childNode(withName: "Paddle", recursively: true),
-                  let rightWallNode = rootNode.childNode(withName: "RightWall", recursively: true),
-                  let leftWallNode = rootNode.childNode(withName: "LeftWall", recursively: true),
-                  let topWallNode = rootNode.childNode(withName: "TopWall", recursively: true) else {
-                return
-            }
+              let paddleNode = rootNode.childNode(withName: "Paddle", recursively: true),
+              let rightWallNode = rootNode.childNode(withName: "RightWall", recursively: true),
+              let leftWallNode = rootNode.childNode(withName: "LeftWall", recursively: true),
+              let topWallNode = rootNode.childNode(withName: "TopWall", recursively: true) else {
+            return
+        }
         let ballPos = UnsafePointer(box2D.getObject("Ball"))
         if (box2D.ballLaunched)
         {
@@ -235,21 +212,24 @@ class Arkanoid: SCNScene {
         
         //        print("Ball pos: \(String(describing: theBall?.position.x)) \(String(describing: theBall?.position.y))")
         
-        // Get brick position and update brick node
-        let brickPos = UnsafePointer(box2D.getObject("Brick"))
-        let theBrick = rootNode.childNode(withName: "Brick", recursively: true)
-        if (brickPos != nil) {
-            
-            // The brick is visible, so set the position
-            theBrick?.position.x = (brickPos?.pointee.loc.x)!
-            theBrick?.position.y = (brickPos?.pointee.loc.y)!
-            //            print("Brick pos: \(String(describing: theBrick?.position.x)) \(String(describing: theBrick?.position.y))")
-            
-        } else {
-            
-            // The brick has disappeared, so hide it
-            theBrick?.isHidden = true
-            
+        for row in 0..<NUM_ROWS {
+            for column in 0..<NUM_COLUMNS {
+                let brickName = "Brick (\(row), \(column))"
+                let brickPos = UnsafePointer(box2D.getObject(brickName))
+                let theBrick = rootNode.childNode(withName: brickName, recursively: true)
+                if (brickPos != nil) {
+                    
+                    // The brick is visible, so set the position
+                    theBrick?.position.x = (brickPos?.pointee.loc.x)!
+                    theBrick?.position.y = (brickPos?.pointee.loc.y)!
+                    
+                } else {
+                    
+                    // The brick has disappeared, so hide it
+                    theBrick?.isHidden = true
+                    
+                }
+            }
         }
         
     }
@@ -273,14 +253,14 @@ class Arkanoid: SCNScene {
         
         // Calculate the new position of the paddle
         let newPositionX = paddleNode.position.x + translationX * paddleMoveSpeed
-
+        
         // Set manual clamp values here
         let minX: Float = -xBound + PADDLE_WIDTH / 2
         let maxX: Float = xBound - PADDLE_WIDTH / 2
         
         // Clamp the new position within the manual clamp values
         let clampedPositionX = min(max(minX, newPositionX), maxX)
-
+        
         // Apply the clamped position
         box2D.updatePaddlePosition(clampedPositionX)
         
