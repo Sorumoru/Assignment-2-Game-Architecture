@@ -400,9 +400,16 @@ public:
     return physicsObjects[name];
 }
 
--(void)Reset
+-(void)Reset:(int)numLives
 {
-    
+    // Reset paddle position and ball position
+    UpdatePaddlePosition:(BALL_POS_X);
+    [self UpdateBallPosition:BALL_POS_X andY:BALL_POS_Y];
+    ballLaunched = false;
+    if (numLives > 0)
+    {
+        return;
+    }
     // Look up the brick, and if it exists, destroy it and delete it
     struct PhysicsObject *theBrick = physicsObjects["Brick"];
     if (theBrick) {
@@ -432,8 +439,6 @@ public:
     
     totalElapsedTime = 0;
     ballHitBrick = false;
-    ballLaunched = false;
-    
 }
 
 

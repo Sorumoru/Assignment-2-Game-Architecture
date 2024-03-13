@@ -23,14 +23,21 @@ class Arkanoid: SCNScene {
     private var yBound: Float = 225                 // Height (y-value) from center of screen (0,0)
     private var paddleMoveSpeed: Float = 0.2
     
+    private var numLives: Int = 3
+    public var livesLeft: Int
+    var livesLabel: UILabel!
+    var gameView: ArkanoidView?
+    
     // Catch if initializer in init() fails
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
     // Initializer
-    override init() {
-        
+    init(gameView: ArkanoidView) {
+        self.livesLeft = numLives
+        self.gameView = gameView
+        gameView.updateLivesLabel(with: livesLeft)
         super.init() // Implement the superclass' initializer
         
         background.contents = UIColor.black // Set the background colour to black
@@ -145,6 +152,16 @@ class Arkanoid: SCNScene {
         rootNode.addChildNode(topWall)
     }
     
+    func decrementLives() {
+        livesLeft -= 1
+        gameView!.updateLivesLabel(with: livesLeft)
+    }
+    
+    func resetLives() {
+        livesLeft = numLives
+        gameView!.updateLivesLabel(with: livesLeft)
+    }
+    
     // Simple game loop that gets called each frame
     @MainActor
     @objc
@@ -174,6 +191,7 @@ class Arkanoid: SCNScene {
             return
         }
         let ballPos = UnsafePointer(box2D.getObject("Ball"))
+        
         if (box2D.ballLaunched)
         {
             // Get ball position and update ball node
@@ -185,32 +203,21 @@ class Arkanoid: SCNScene {
             theBall.position.y = paddleNode.position.y + BALL_RADIUS * 2
             box2D.updateBallPosition(theBall.position.x, andY: theBall.position.y)
         }
+        
+        if (theBall.position.y < BALL_OUT_OF_BOUNDS_Y) {
+            decrementLives()
+            box2D.reset(Int32(numLives))
+            if (numLives <= 0) {
+                resetLives()
+            }
+        }
+        
         // Update paddle position to match its Box2D physics object
         let paddlePos = UnsafePointer(box2D.getObject("Paddle"))
         if let paddlePos = paddlePos {
             paddleNode.position.x = paddlePos.pointee.loc.x
             paddleNode.position.y = paddlePos.pointee.loc.y
         }
-        
-        let leftWallPos = UnsafePointer(box2D.getObject("LeftWall"))
-        if let leftWallPos = leftWallPos {
-            leftWallNode.position.x = leftWallPos.pointee.loc.x
-            leftWallNode.position.y = leftWallPos.pointee.loc.y
-        }
-        
-        let rightWallPos = UnsafePointer(box2D.getObject("RightWall"))
-        if let rightWallPos = rightWallPos {
-            rightWallNode.position.x = rightWallPos.pointee.loc.x
-            rightWallNode.position.y = rightWallPos.pointee.loc.y
-        }
-        
-        let topWallPos = UnsafePointer(box2D.getObject("TopWall"))
-        if let topWallPos = topWallPos {
-            topWallNode.position.x = topWallPos.pointee.loc.x
-            topWallNode.position.y = topWallPos.pointee.loc.y
-        }
-        
-        //        print("Ball pos: \(String(describing: theBall?.position.x)) \(String(describing: theBall?.position.y))")
         
         for row in 0..<NUM_ROWS {
             for column in 0..<NUM_COLUMNS {
@@ -231,7 +238,6 @@ class Arkanoid: SCNScene {
                 }
             }
         }
-        
     }
     
     
@@ -267,16 +273,5 @@ class Arkanoid: SCNScene {
         // Reset the translation of the gesture recognizer
         gestureRecognizer.setTranslation(.zero, in: gestureRecognizer.view)
     }
-    
-    // Function to reset the physics (reset Box2D and reset the brick)
-    @MainActor
-    func resetPhysics() {
-        
-        box2D.reset()
-        let theBrick = rootNode.childNode(withName: "Brick", recursively: true)
-        theBrick?.isHidden = false
-        
-    }
-    
 }
 

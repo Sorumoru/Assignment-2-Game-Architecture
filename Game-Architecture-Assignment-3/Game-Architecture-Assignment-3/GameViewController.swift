@@ -11,19 +11,27 @@ import SceneKit
 
 class GameViewController: UIViewController {
 
-    let scene = Arkanoid()
+    var scene: Arkanoid!
+    var livesLabel: UILabel!
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        // Add the ArkanoidView to the view controller's view
+        let arkanoidView = ArkanoidView()
+        arkanoidView.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(arkanoidView)
+        
         // create a new scene
-        //let scene = Arkanoid()
+        scene = Arkanoid(gameView: arkanoidView)
         
         // retrieve the SCNView
         let scnView = self.view as! SCNView
         
         // set the scene to the view
         scnView.scene = scene
+        
+        
         
         // allows the user to manipulate the camera
         scnView.allowsCameraControl = true
