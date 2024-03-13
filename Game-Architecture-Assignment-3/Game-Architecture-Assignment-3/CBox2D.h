@@ -73,7 +73,7 @@ struct PhysicsObject {
 -(void) UpdateBallPosition:(float)xCoordinate andY:(float)yCoordinate;      // move the ball directly, used at game start to move with the paddle
 -(void) UpdatePaddlePosition:(float)xCoordinate;                            // move the paddle directly, only need to change the x value
 -(void) Update:(float)elapsedTime;                                          // update the Box2D engine
--(void) RegisterHitWithString:(char *)physicsObjName;
+-(void) RegisterHitWithString:(NSString *)physicsObjName;
 -(void) RegisterHit;                                                        // Register when the ball hits the brick
 -(void) AddObject:(char *)name newObject:(struct PhysicsObject *)newObj;    // Add a new physics object
 -(struct PhysicsObject *) GetObject:(const char *)name;                     // Get a physics object by name

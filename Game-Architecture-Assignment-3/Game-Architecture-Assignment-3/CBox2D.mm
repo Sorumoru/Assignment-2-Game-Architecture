@@ -60,7 +60,7 @@ public:
             CBox2D *parentObj = (__bridge CBox2D *)(objData->box2DObj);
             
             // Call RegisterHit (assume CBox2D object is in user data)
-            [parentObj RegisterHitWithString:name];
+            [parentObj RegisterHitWithString:userDataString];
             [parentObj RegisterHit];    // assumes RegisterHit is a callback function to register collision
             
         }
@@ -178,7 +178,18 @@ public:
            newObj->objType = ObjTypeBox;
            // Create a unique name for each brick using row and column indices
            char objName[20]; // Adjust the size as needed
-           snprintf(objName, sizeof(objName), "Brick (%d, %d)", row, column);
+           //snprintf(objName, sizeof(objName), "Brick (%d, %d)", row, column);
+           char rowString[10];
+           char columnString[10];
+           snprintf(rowString, sizeof(rowString), "%d", row);
+           snprintf(columnString, sizeof(columnString), "%d", column);
+
+           strcpy(objName, "Brick (");
+           strcat(objName, rowString);
+           strcat(objName, ", ");
+           strcat(objName, columnString);
+           strcat(objName, ")");
+           
            [self AddObject:objName newObject:newObj];
            //free(objName);
        }
@@ -245,7 +256,7 @@ public:
     
 }
 
--(void)RegisterHitWithString:(char *) physicsObjName
+-(void)RegisterHitWithString:(NSString *) physicsObjName
 {
     printf("physobj name: %s\n", physicsObjName);
 }
