@@ -38,7 +38,7 @@ class GameViewController: UIViewController {
         
         // Add pan gesture recognizer for paddle movement
         let panGesture = UIPanGestureRecognizer(target: self, action: #selector(handlePan(_:)))
-        //scnView.addGestureRecognizer(panGesture)
+        scnView.addGestureRecognizer(panGesture)
     }
     
     @objc
