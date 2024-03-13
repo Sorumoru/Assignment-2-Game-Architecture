@@ -26,7 +26,8 @@
 #define BALL_POS_X            0
 #define BALL_POS_Y            5
 #define BALL_RADIUS            3.0f
-#define BALL_VELOCITY        1000.0f
+#define BALL_VELOCITY        10000.0f
+
 #define PADDLE_WIDTH        15.0f
 #define PADDLE_HEIGHT       3.0f
 #define PADDLE_START_X      200.0f
@@ -36,10 +37,16 @@
 #define NUM_COLUMNS         7
 #define BRICK_SPACING       1
 
+#define X_BOUND             65          // Width (x-value) from center of screen (0,0)
+#define Y_BOUND             225         // Height (y-value) from center of screen (0,0)
 
+#define WALL_Y_OFFSET       100.0f      // Y offset to move side walls up by
+#define WALL_THICKNESS      1.0f        // Wall thickness
+#define WALL_HEIGHT         250.0f
+#define TOP_WALL_WIDTH      130.0f
 
 // You can define other object types here
-typedef enum { ObjTypeBox=0, ObjTypeCircle=1, ObjTypePaddle=2 } ObjectType;
+typedef enum { ObjTypeBox=0, ObjTypeCircle=1, ObjTypePaddle=2, ObjTypeVertWall=3, ObjTypeHoriWall=4 } ObjectType;
 
 
 // Location of each object in our physics world
