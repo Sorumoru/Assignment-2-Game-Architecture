@@ -161,7 +161,6 @@ class Arkanoid: SCNScene {
         rootNode.addChildNode(leftWall)
         
         // Top wall
-        let topWallWidth:CGFloat = 130
         let topWall = SCNNode(geometry: SCNBox(width: CGFloat(TOP_WALL_WIDTH), height: CGFloat(WALL_THICKNESS), length: 1.0, chamferRadius: 0))
         topWall.name = "TopWall"
         topWall.position = SCNVector3(0, yBound, 0)

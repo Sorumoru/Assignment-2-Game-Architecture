@@ -146,7 +146,7 @@ public:
         newObj = new struct PhysicsObject;
         newObj->loc.x = X_BOUND + WALL_THICKNESS / 2;
         newObj->loc.y = WALL_Y_OFFSET;
-        newObj->objType = ObjTypeHoriWall;
+        newObj->objType = ObjTypeVertWall;
         newObj->isPaddle = false;
         char *rightWallName = strdup("RightWall");
         [self AddObject:rightWallName newObject:newObj];
@@ -155,7 +155,7 @@ public:
         newObj = new struct PhysicsObject;
         newObj->loc.x = -X_BOUND - WALL_THICKNESS / 2;
         newObj->loc.y = WALL_Y_OFFSET;
-        newObj->objType = ObjTypeHoriWall;
+        newObj->objType = ObjTypeVertWall;
         newObj->isPaddle = false;
         char *leftWallName = strdup("LeftWall");
         [self AddObject:leftWallName newObject:newObj];
@@ -164,7 +164,7 @@ public:
         newObj = new struct PhysicsObject;
         newObj->loc.x = 0;
         newObj->loc.y = Y_BOUND;
-        newObj->objType = ObjTypeVertWall;
+        newObj->objType = ObjTypeHoriWall;
         newObj->isPaddle = false;
         char *topWallName = strdup("TopWall");
         [self AddObject:topWallName newObject:newObj];
@@ -281,7 +281,7 @@ public:
         ballLaunched = true;
         // Apply a force (since the ball is set up not to be affected by gravity)
         struct PhysicsObject *theBall = physicsObjects["Ball"];
-        ((b2Body *)theBall->b2ShapePtr)->ApplyLinearImpulse(b2Vec2(200, BALL_VELOCITY),
+        ((b2Body *)theBall->b2ShapePtr)->ApplyLinearImpulse(b2Vec2(5000, BALL_VELOCITY),
                                                             ((b2Body *)theBall->b2ShapePtr)->GetPosition(),
                                                             true);
         ((b2Body *)theBall->b2ShapePtr)->SetActive(true);
