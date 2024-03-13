@@ -147,6 +147,33 @@ public:
         objName = strdup("Paddle");
         [self AddObject:objName newObject:newObj];
         
+        // Right wall
+        newObj = new struct PhysicsObject;
+        newObj->loc.x = X_BOUND + WALL_THICKNESS / 2;
+        newObj->loc.y = WALL_Y_OFFSET;
+        newObj->objType = ObjTypeVertWall;
+        newObj->isPaddle = false;
+        char *rightWallName = strdup("RightWall");
+        [self AddObject:rightWallName newObject:newObj];
+        
+        // Left wall
+        newObj = new struct PhysicsObject;
+        newObj->loc.x = -X_BOUND - WALL_THICKNESS / 2;
+        newObj->loc.y = WALL_Y_OFFSET;
+        newObj->objType = ObjTypeVertWall;
+        newObj->isPaddle = false;
+        char *leftWallName = strdup("LeftWall");
+        [self AddObject:leftWallName newObject:newObj];
+        
+        // Top wall
+        newObj = new struct PhysicsObject;
+        newObj->loc.x = 0;
+        newObj->loc.y = Y_BOUND;
+        newObj->objType = ObjTypeHoriWall;
+        newObj->isPaddle = false;
+        char *topWallName = strdup("TopWall");
+        [self AddObject:topWallName newObject:newObj];
+        
         totalElapsedTime = 0;
         ballHitBrick = false;
         ballLaunched = false;
@@ -275,7 +302,7 @@ public:
         ballLaunched = true;
         // Apply a force (since the ball is set up not to be affected by gravity)
         struct PhysicsObject *theBall = physicsObjects["Ball"];
-        ((b2Body *)theBall->b2ShapePtr)->ApplyLinearImpulse(b2Vec2(200, BALL_VELOCITY),
+        ((b2Body *)theBall->b2ShapePtr)->ApplyLinearImpulse(b2Vec2(5000, BALL_VELOCITY),
                                                             ((b2Body *)theBall->b2ShapePtr)->GetPosition(),
                                                             true);
         ((b2Body *)theBall->b2ShapePtr)->SetActive(true);
@@ -309,7 +336,7 @@ public:
     // Set up the body definition and create the body from it
     // Box2D Bodies Documentation: https://box2d.org/documentation/md__d_1__git_hub_box2d_docs_dynamics.html
     b2BodyDef bodyDef;
-    if (strcmp(name, "Ball") == 0 || strcmp(name, "{Ad}") == 0) {
+    if (strcmp(name, "Ball") == 0) {
         bodyDef.type = b2_dynamicBody;
     } else {
         bodyDef.type = b2_staticBody;
@@ -361,8 +388,25 @@ public:
             fixtureDef.shape = &dynamicBox;
             fixtureDef.density = 1.0f;
             fixtureDef.friction = 0.3f;
-            fixtureDef.restitution = 0.0f; // Paddle should not bounce
-            theObject->CreateFixture(&fixtureDef);
+            fixtureDef.restitution = 0.0f;
+            
+            break;
+            
+        case ObjTypeVertWall:
+            dynamicBox.SetAsBox(WALL_THICKNESS/2, WALL_HEIGHT/2);
+            fixtureDef.shape = &dynamicBox;
+            fixtureDef.density = 1.0f;
+            fixtureDef.friction = 0.3f;
+            fixtureDef.restitution = 0.0f;
+            
+            break;
+            
+        case ObjTypeHoriWall:
+            dynamicBox.SetAsBox(TOP_WALL_WIDTH/2, WALL_THICKNESS/2);
+            fixtureDef.shape = &dynamicBox;
+            fixtureDef.density = 1.0f;
+            fixtureDef.friction = 0.3f;
+            fixtureDef.restitution = 0.0f;
             
             break;
             
