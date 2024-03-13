@@ -146,27 +146,23 @@ class Arkanoid: SCNScene {
     }
     
     func addWalls() {
-        let yOffset: Float = 100
-        let wallThickness: CGFloat = 1.0
-        let wallHeight: CGFloat = 250.0
-        
         // Right wall
-        let rightWall = SCNNode(geometry: SCNBox(width: wallThickness, height: wallHeight, length: 1.0, chamferRadius: 0))
+        let rightWall = SCNNode(geometry: SCNBox(width: CGFloat(WALL_THICKNESS), height: CGFloat(WALL_HEIGHT), length: 1.0, chamferRadius: 0))
         rightWall.name = "RightWall"
-        rightWall.position = SCNVector3(xBound + Float(wallThickness) / 2, yOffset, 0)
+        rightWall.position = SCNVector3(xBound + WALL_THICKNESS / 2, WALL_Y_OFFSET, 0)
         rightWall.geometry?.firstMaterial?.diffuse.contents = UIColor.gray
         rootNode.addChildNode(rightWall)
         
         // Left wall
-        let leftWall = SCNNode(geometry: SCNBox(width: wallThickness, height: wallHeight, length: 1.0, chamferRadius: 0))
+        let leftWall = SCNNode(geometry: SCNBox(width: CGFloat(WALL_THICKNESS), height: CGFloat(WALL_HEIGHT), length: 1.0, chamferRadius: 0))
         leftWall.name = "LeftWall"
-        leftWall.position = SCNVector3(-xBound - Float(wallThickness) / 2, yOffset, 0)
+        leftWall.position = SCNVector3(-xBound - WALL_THICKNESS / 2, WALL_Y_OFFSET, 0)
         leftWall.geometry?.firstMaterial?.diffuse.contents = UIColor.gray
         rootNode.addChildNode(leftWall)
         
         // Top wall
         let topWallWidth:CGFloat = 130
-        let topWall = SCNNode(geometry: SCNBox(width: topWallWidth, height: wallThickness, length: 1.0, chamferRadius: 0))
+        let topWall = SCNNode(geometry: SCNBox(width: CGFloat(TOP_WALL_WIDTH), height: CGFloat(WALL_THICKNESS), length: 1.0, chamferRadius: 0))
         topWall.name = "TopWall"
         topWall.position = SCNVector3(0, yBound, 0)
         topWall.geometry?.firstMaterial?.diffuse.contents = UIColor.gray
@@ -195,9 +191,12 @@ class Arkanoid: SCNScene {
         
         // Ensure ball and paddle nodes exist
         guard let theBall = rootNode.childNode(withName: "Ball", recursively: true),
-              let paddleNode = rootNode.childNode(withName: "Paddle", recursively: true) else {
-            return
-        }
+                  let paddleNode = rootNode.childNode(withName: "Paddle", recursively: true),
+                  let rightWallNode = rootNode.childNode(withName: "RightWall", recursively: true),
+                  let leftWallNode = rootNode.childNode(withName: "LeftWall", recursively: true),
+                  let topWallNode = rootNode.childNode(withName: "TopWall", recursively: true) else {
+                return
+            }
         let ballPos = UnsafePointer(box2D.getObject("Ball"))
         if (box2D.ballLaunched)
         {
@@ -215,6 +214,24 @@ class Arkanoid: SCNScene {
         if let paddlePos = paddlePos {
             paddleNode.position.x = paddlePos.pointee.loc.x
             paddleNode.position.y = paddlePos.pointee.loc.y
+        }
+        
+        let leftWallPos = UnsafePointer(box2D.getObject("LeftWall"))
+        if let leftWallPos = leftWallPos {
+            leftWallNode.position.x = leftWallPos.pointee.loc.x
+            leftWallNode.position.y = leftWallPos.pointee.loc.y
+        }
+        
+        let rightWallPos = UnsafePointer(box2D.getObject("RightWall"))
+        if let rightWallPos = rightWallPos {
+            rightWallNode.position.x = rightWallPos.pointee.loc.x
+            rightWallNode.position.y = rightWallPos.pointee.loc.y
+        }
+        
+        let topWallPos = UnsafePointer(box2D.getObject("TopWall"))
+        if let topWallPos = topWallPos {
+            topWallNode.position.x = topWallPos.pointee.loc.x
+            topWallNode.position.y = topWallPos.pointee.loc.y
         }
         
         //        print("Ball pos: \(String(describing: theBall?.position.x)) \(String(describing: theBall?.position.y))")
