@@ -87,6 +87,8 @@ class Arkanoid: SCNScene {
     
     
     func addBrickGrid(rows: Int, columns: Int, spacing: Float) {
+        var brickPositions = [BrickPosition]()
+        
         let brickWidth: Float = Float(BRICK_WIDTH)
         let brickHeight: Float = Float(BRICK_HEIGHT)
         
@@ -96,19 +98,23 @@ class Arkanoid: SCNScene {
         let startX: Float = -(totalWidth / 2)
         let startY: Float = (totalHeight / 2) + 100
         
-        for row in 0..<rows {
-            for column in 0..<columns {
+        for row in 0..<NUM_ROWS {
+            for column in 0..<NUM_COLUMNS {
                 let brick = SCNNode(geometry: SCNBox(width: CGFloat(brickWidth), height: CGFloat(brickHeight), length: 1, chamferRadius: 0))
-                brick.name = "Brick \(row)\(column)"
+                brick.name = "Brick"
                 brick.geometry?.firstMaterial?.diffuse.contents = UIColor.red
                 
                 let x = startX + Float(column) * (brickWidth + spacing)
                 let y = startY - Float(row) * (brickHeight + spacing)
                 
                 brick.position = SCNVector3(x, y, 0)
+                
+                brickPositions.append(BrickPosition(x: x, y: y))
+                
                 rootNode.addChildNode(brick)
             }
         }
+        //box2D.createBrickPhysics(brickPositions)
     }
 
     
@@ -152,21 +158,21 @@ class Arkanoid: SCNScene {
         //        print("Ball pos: \(String(describing: theBall?.position.x)) \(String(describing: theBall?.position.y))")
         
         // Get brick position and update brick node
-//        let brickPos = UnsafePointer(box2D.getObject("Brick"))
-//        let theBrick = rootNode.childNode(withName: "Brick", recursively: true)
-//        if (brickPos != nil) {
-//            
-//            // The brick is visible, so set the position
-//            theBrick?.position.x = (brickPos?.pointee.loc.x)!
-//            theBrick?.position.y = (brickPos?.pointee.loc.y)!
-//            //            print("Brick pos: \(String(describing: theBrick?.position.x)) \(String(describing: theBrick?.position.y))")
-//            
-//        } else {
-//            
-//            // The brick has disappeared, so hide it
-//            theBrick?.isHidden = true
-//            
-//        }
+        let brickPos = UnsafePointer(box2D.getObject("Brick"))
+        let theBrick = rootNode.childNode(withName: "Brick", recursively: true)
+        if (brickPos != nil) {
+            
+            // The brick is visible, so set the position
+            theBrick?.position.x = (brickPos?.pointee.loc.x)!
+            theBrick?.position.y = (brickPos?.pointee.loc.y)!
+            //            print("Brick pos: \(String(describing: theBrick?.position.x)) \(String(describing: theBrick?.position.y))")
+            
+        } else {
+            
+            // The brick has disappeared, so hide it
+            theBrick?.isHidden = true
+            
+        }
         
     }
     

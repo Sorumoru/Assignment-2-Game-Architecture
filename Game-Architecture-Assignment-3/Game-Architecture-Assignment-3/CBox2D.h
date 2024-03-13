@@ -10,6 +10,7 @@
 #define MyGLGame_CBox2D_h
 
 #import <Foundation/NSObject.h>
+#include <vector>
 
 
 // Set up brick and ball physics parameters here:
@@ -18,13 +19,17 @@
 
 #define BRICK_POS_X         0
 #define BRICK_POS_Y         90
-#define BRICK_WIDTH         15.0f
+#define BRICK_WIDTH         10.0f
 #define BRICK_HEIGHT        5.0f
 #define BRICK_WAIT            1.0f
 #define BALL_POS_X            0
 #define BALL_POS_Y            5
 #define BALL_RADIUS            3.0f
 #define BALL_VELOCITY        1000.0f
+
+#define NUM_ROWS            5
+#define NUM_COLUMNS         7
+#define BRICK_SPACING       1
 
 
 // You can define other object types here
@@ -36,6 +41,10 @@ struct PhysicsLocation {
     float x, y, theta;
 };
 
+struct BrickPosition {
+    float x;
+    float y;
+};
 
 // Information about each physics object
 struct PhysicsObject {
@@ -52,6 +61,7 @@ struct PhysicsObject {
 
 -(void) HelloWorld; // Basic Hello World! example from Box2D
 
+-(void) createBrickPhysics;
 -(void) LaunchBall;                                                         // launch the ball
 -(void) Update:(float)elapsedTime;                                          // update the Box2D engine
 -(void) RegisterHit;                                                        // Register when the ball hits the brick

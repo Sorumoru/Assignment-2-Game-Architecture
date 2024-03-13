@@ -66,11 +66,6 @@ public:
     
 };
 
-struct BrickPosition {
-    float x;
-    float y;
-};
-
 #pragma mark - CBox2D
 
 @interface CBox2D ()
@@ -139,7 +134,7 @@ struct BrickPosition {
         totalElapsedTime = 0;
         ballHitBrick = false;
         ballLaunched = false;
-        
+        [self createBrickPhysics];
     }
     
     return self;
@@ -157,6 +152,37 @@ struct BrickPosition {
 #endif
     if (contactListener) delete contactListener;
     
+}
+-(void) createBrickPhysics {
+   for (int row = 0; row < NUM_ROWS; row++) {
+       for (int column = 0; column < NUM_COLUMNS; column++) {
+           struct PhysicsObject *newObj = new struct PhysicsObject;
+           newObj->loc.x = BRICK_POS_X + column * (BRICK_WIDTH + BRICK_SPACING);
+           newObj->loc.y = BRICK_POS_Y - row * (BRICK_HEIGHT + BRICK_SPACING);
+           newObj->objType = ObjTypeBox;
+           // Create a unique name for each brick using row and column indices
+           char objName[50]; // Adjust the size as needed
+           snprintf(objName, sizeof(objName), "Brick (%d, %d)", row, column);
+           printf("Object name: %s\n", objName);
+           //char *objName = strdup("Bricky");
+           [self AddObject:objName newObject:newObj];
+//           b2BodyDef bodyDef;
+//           bodyDef.type = b2_staticBody;
+//           bodyDef.position.Set(BRICK_POS_X + column * (BRICK_WIDTH + BRICK_SPACING), BRICK_POS_Y - row * (BRICK_HEIGHT + BRICK_SPACING));
+//           b2Body* body = world->CreateBody(&bodyDef);
+//           
+//           b2PolygonShape boxShape;
+//           boxShape.SetAsBox(BRICK_WIDTH / 2.0f, BRICK_HEIGHT / 2.0f);
+//           
+//           b2FixtureDef fixtureDef;
+//           fixtureDef.shape = &boxShape;
+//           fixtureDef.density = 1.0f;
+//           fixtureDef.friction = 0.3f;
+//           
+//           body->CreateFixture(&fixtureDef);
+           
+       }
+   }
 }
 
 -(void)Update:(float)elapsedTime
@@ -261,8 +287,13 @@ struct BrickPosition {
     
     // Set up the body definition and create the body from it
     b2BodyDef bodyDef;
+    if (strcmp(name, "Ball") == 0) {
+        bodyDef.type = b2_dynamicBody;
+    } else {
+        bodyDef.type = b2_staticBody;
+    }
     b2Body *theObject;
-    bodyDef.type = b2_dynamicBody;
+    //bodyDef.type = b2_dynamicBody;
     //bodyDef.type = b2_staticBody; // change added object to a static body - Jun https://box2d.org/documentation/md__d_1__git_hub_box2d_docs_dynamics.html
     bodyDef.position.Set(newObj->loc.x, newObj->loc.y);
     theObject = world->CreateBody(&bodyDef);
@@ -284,7 +315,6 @@ struct BrickPosition {
     switch (newObj->objType) {
             
         case ObjTypeBox:
-            bodyDef.type = b2_staticBody;
             dynamicBox.SetAsBox(BRICK_WIDTH/2, BRICK_HEIGHT/2);
             fixtureDef.shape = &dynamicBox;
             fixtureDef.density = 1.0f;
