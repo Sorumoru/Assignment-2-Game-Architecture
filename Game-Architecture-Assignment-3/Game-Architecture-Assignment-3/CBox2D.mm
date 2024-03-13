@@ -48,7 +48,11 @@ public:
             
             // Use contact->GetFixtureA()->GetBody() to get the body that was hit
             b2Body* bodyA = contact->GetFixtureA()->GetBody();
-            b2Body* bodyB = contact->GetFixtureB()->GetBody();
+            b2Fixture* fixtureA = contact->GetFixtureA();
+            // Assuming fixtureA->GetBody()->GetUserData() returns a pointer to a char* representing the name
+            char* name = (char*)(fixtureA->GetUserData());
+            NSString *userDataString = [NSString stringWithUTF8String:name];
+            //printf("%s\n", name);
             // Get the PhysicsObject as the user data, and then the CBox2D object in that struct
             // This is needed because this handler may be running in a different thread and this
             //  class does not know about the CBox2D that's running the physics
@@ -56,6 +60,7 @@ public:
             CBox2D *parentObj = (__bridge CBox2D *)(objData->box2DObj);
             
             // Call RegisterHit (assume CBox2D object is in user data)
+            [parentObj RegisterHitWithString:name];
             [parentObj RegisterHit];    // assumes RegisterHit is a callback function to register collision
             
         }
@@ -172,10 +177,10 @@ public:
            newObj->loc.y = 100 + BRICK_POS_Y - row * (BRICK_HEIGHT + BRICK_SPACING);
            newObj->objType = ObjTypeBox;
            // Create a unique name for each brick using row and column indices
-           char objName[50]; // Adjust the size as needed
+           char objName[20]; // Adjust the size as needed
            snprintf(objName, sizeof(objName), "Brick (%d, %d)", row, column);
-           printf("Object name: %s\n", objName);
            [self AddObject:objName newObject:newObj];
+           //free(objName);
        }
    }
 }
@@ -240,6 +245,11 @@ public:
     
 }
 
+-(void)RegisterHitWithString:(char *) physicsObjName
+{
+    printf("physobj name: %s\n", physicsObjName);
+}
+
 -(void)RegisterHit
 {
     // Set some flag here for processing later...
@@ -285,7 +295,6 @@ public:
 
 -(void) AddObject:(char *)name newObject:(struct PhysicsObject *)newObj
 {
-    
     // Set up the body definition and create the body from it
     // Box2D Bodies Documentation: https://box2d.org/documentation/md__d_1__git_hub_box2d_docs_dynamics.html
     b2BodyDef bodyDef;
@@ -311,11 +320,13 @@ public:
     b2PolygonShape dynamicBox;
     b2CircleShape circle;
     b2FixtureDef fixtureDef;
-    
+    fixtureDef.userData = name;
+    printf("adding %s\n", name);
     switch (newObj->objType) {
             
         case ObjTypeBox:
             dynamicBox.SetAsBox(BRICK_WIDTH/2, BRICK_HEIGHT/2);
+            //printf("adding %s", name);
             fixtureDef.shape = &dynamicBox;
             fixtureDef.density = 1.0f;
             fixtureDef.friction = 0.3f;
