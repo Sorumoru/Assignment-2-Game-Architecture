@@ -121,6 +121,7 @@ public:
         newObj->loc.x = BRICK_POS_X;
         newObj->loc.y = BRICK_POS_Y;
         newObj->objType = ObjTypeBox;
+        newObj->isPaddle = false;
         char *objName = strdup("Brick");
         [self AddObject:objName newObject:newObj];
         
@@ -128,7 +129,17 @@ public:
         newObj->loc.x = BALL_POS_X;
         newObj->loc.y = BALL_POS_Y;
         newObj->objType = ObjTypeCircle;
+        newObj->isPaddle = false;
         objName = strdup("Ball");
+        [self AddObject:objName newObject:newObj];
+        
+        // Set up the paddle object for Box2D
+        newObj = new struct PhysicsObject;
+        newObj->loc.x = BALL_POS_X;
+        newObj->loc.y = BALL_POS_Y - 2 * BALL_RADIUS;
+        newObj->objType = ObjTypePaddle;
+        newObj->isPaddle = true;
+        objName = strdup("Paddle");
         [self AddObject:objName newObject:newObj];
         
         totalElapsedTime = 0;
@@ -224,11 +235,11 @@ public:
         //((b2Body *)theBall->b2ShapePtr)->SetActive(false);
         
         // Destroy the brick from Box2D and related objects in this class
-        world->DestroyBody(((b2Body *)theBrick->b2ShapePtr));
-        delete theBrick;
-        theBrick = nullptr;
-        physicsObjects.erase("Brick");
-        ballHitBrick = false;   // until a reset and re-launch
+        //world->DestroyBody(((b2Body *)theBrick->b2ShapePtr));
+        //delete theBrick;
+        //theBrick = nullptr;
+        //physicsObjects.erase("Brick");
+        //ballHitBrick = false;   // until a reset and re-launch
         
     }
     
@@ -280,7 +291,7 @@ public:
 
 }
 
--(void)MoveBall:(float)xCoordinate andY:(float)yCoordinate {
+-(void)UpdateBallPosition:(float)xCoordinate andY:(float)yCoordinate {
     // Get the PhysicsObject corresponding to the ball
     struct PhysicsObject *theBall = [self GetObject:"Ball"];
     
@@ -290,20 +301,29 @@ public:
     }
 }
 
+// Method to update paddle position based on player input
+-(void)UpdatePaddlePosition:(float)xCoordinate {
+    // Get the PhysicsObject corresponding to the paddle (assuming there's only one paddle)
+    struct PhysicsObject *thePaddle = physicsObjects["Paddle"];
+    
+    if (thePaddle && thePaddle->b2ShapePtr) {
+        // Update the position of the paddle's Box2D body to the specified x-coordinate
+        ((b2Body *)thePaddle->b2ShapePtr)->SetTransform(b2Vec2(xCoordinate, ((b2Body *)thePaddle->b2ShapePtr)->GetPosition().y), 0);
+    }
+}
 
 -(void) AddObject:(char *)name newObject:(struct PhysicsObject *)newObj
 {
     
     // Set up the body definition and create the body from it
+    // Box2D Bodies Documentation: https://box2d.org/documentation/md__d_1__git_hub_box2d_docs_dynamics.html
     b2BodyDef bodyDef;
-    if (strcmp(name, "Ball") == 0) {
+    if (strcmp(name, "Ball") == 0 || strcmp(name, "{Ad}") == 0) {
         bodyDef.type = b2_dynamicBody;
     } else {
         bodyDef.type = b2_staticBody;
     }
     b2Body *theObject;
-    //bodyDef.type = b2_dynamicBody;
-    //bodyDef.type = b2_staticBody; // change added object to a static body - Jun https://box2d.org/documentation/md__d_1__git_hub_box2d_docs_dynamics.html
     bodyDef.position.Set(newObj->loc.x, newObj->loc.y);
     theObject = world->CreateBody(&bodyDef);
     if (!theObject) return;
@@ -340,6 +360,16 @@ public:
             fixtureDef.friction = 0.3f;
             fixtureDef.restitution = 1.0f;
             theObject->SetGravityScale(0.0f);
+            
+            break;
+            
+        case ObjTypePaddle:
+            dynamicBox.SetAsBox(PADDLE_WIDTH/2, PADDLE_HEIGHT/2);
+            fixtureDef.shape = &dynamicBox;
+            fixtureDef.density = 1.0f;
+            fixtureDef.friction = 0.3f;
+            fixtureDef.restitution = 0.0f; // Paddle should not bounce
+            theObject->CreateFixture(&fixtureDef);
             
             break;
             

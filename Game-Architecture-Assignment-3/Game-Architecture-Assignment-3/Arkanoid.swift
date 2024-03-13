@@ -136,17 +136,11 @@ class Arkanoid: SCNScene {
     }
     
     func addPaddle() {
-        let paddleWidth: CGFloat = 15.0
-        let paddleHeight: CGFloat = 3.0
-        let paddleDepth: CGFloat = 1.0
-        
-        let paddleGeometry = SCNBox(width: paddleWidth, height: paddleHeight, length: paddleDepth, chamferRadius: 0)
+        let paddleGeometry = SCNBox(width: CGFloat(PADDLE_WIDTH), height: CGFloat(PADDLE_HEIGHT), length: 1.0, chamferRadius: 0)
         let paddleNode = SCNNode(geometry: paddleGeometry)
         paddleNode.name = "Paddle"
         paddleNode.geometry?.firstMaterial?.diffuse.contents = UIColor.blue
-        
         paddleNode.position = SCNVector3(Int(BALL_POS_X), Int(BALL_POS_Y) - Int(2 * BALL_RADIUS), 0)
-        
         rootNode.addChildNode(paddleNode)
     }
     
@@ -185,10 +179,14 @@ class Arkanoid: SCNScene {
             // Move the ball with the paddle and set the box2D ball position directly
             theBall.position.x = paddleNode.position.x
             theBall.position.y = paddleNode.position.y + BALL_RADIUS * 2
-            box2D.moveBall(theBall.position.x, andY: theBall.position.y)
+            box2D.updateBallPosition(theBall.position.x, andY: theBall.position.y)
         }
-        
-        
+        // Update paddle position to match its Box2D physics object
+        let paddlePos = UnsafePointer(box2D.getObject("Paddle"))
+        if let paddlePos = paddlePos {
+            paddleNode.position.x = paddlePos.pointee.loc.x
+            paddleNode.position.y = paddlePos.pointee.loc.y
+        }
         
         //        print("Ball pos: \(String(describing: theBall?.position.x)) \(String(describing: theBall?.position.y))")
         
@@ -239,7 +237,7 @@ class Arkanoid: SCNScene {
         let clampedPositionX = min(max(minX, newPositionX), maxX)
         
         // Apply the clamped position
-        paddleNode.position.x = clampedPositionX
+        box2D.updatePaddlePosition(clampedPositionX)
         
         // Reset the translation of the gesture recognizer
         gestureRecognizer.setTranslation(.zero, in: gestureRecognizer.view)

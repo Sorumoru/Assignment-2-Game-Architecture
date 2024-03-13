@@ -26,6 +26,10 @@
 #define BALL_POS_Y            5
 #define BALL_RADIUS            3.0f
 #define BALL_VELOCITY        1000.0f
+#define PADDLE_WIDTH        15.0f
+#define PADDLE_HEIGHT       3.0f
+#define PADDLE_START_X      200.0f
+#define PADDLE_START_Y      100.0f
 
 #define NUM_ROWS            5
 #define NUM_COLUMNS         7
@@ -33,7 +37,7 @@
 
 
 // You can define other object types here
-typedef enum { ObjTypeBox=0, ObjTypeCircle=1 } ObjectType;
+typedef enum { ObjTypeBox=0, ObjTypeCircle=1, ObjTypePaddle=2 } ObjectType;
 
 
 // Location of each object in our physics world
@@ -53,6 +57,7 @@ struct PhysicsObject {
     ObjectType objType;         // type
     void *b2ShapePtr;           // pointer to Box2D shape definition
     void *box2DObj;             // pointer to the CBox2D object for use in callbacks
+    bool isPaddle;              // a flag to identify the paddle
 };
 
 
@@ -63,7 +68,8 @@ struct PhysicsObject {
 
 -(void) createBrickPhysics;
 -(void) LaunchBall;                                                         // launch the ball
--(void) MoveBall:(float)xCoordinate andY:(float)yCoordinate;                // move the ball directly, used at game start to move with the paddle
+-(void) UpdateBallPosition:(float)xCoordinate andY:(float)yCoordinate;      // move the ball directly, used at game start to move with the paddle
+-(void) UpdatePaddlePosition:(float)xCoordinate;                            // move the paddle directly, only need to change the x value
 -(void) Update:(float)elapsedTime;                                          // update the Box2D engine
 -(void) RegisterHit;                                                        // Register when the ball hits the brick
 -(void) AddObject:(char *)name newObject:(struct PhysicsObject *)newObj;    // Add a new physics object
