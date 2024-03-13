@@ -218,10 +218,10 @@ public:
     {
         
         // Stop the ball and make sure it is not affected by forces
-        ((b2Body *)theBall->b2ShapePtr)->SetLinearVelocity(b2Vec2(0, 0));
-        ((b2Body *)theBall->b2ShapePtr)->SetAngularVelocity(0);
-        ((b2Body *)theBall->b2ShapePtr)->SetAwake(false);
-        ((b2Body *)theBall->b2ShapePtr)->SetActive(false);
+        //((b2Body *)theBall->b2ShapePtr)->SetLinearVelocity(b2Vec2(0, 0));
+        //((b2Body *)theBall->b2ShapePtr)->SetAngularVelocity(0);
+        //((b2Body *)theBall->b2ShapePtr)->SetAwake(false);
+        //((b2Body *)theBall->b2ShapePtr)->SetActive(false);
         
         // Destroy the brick from Box2D and related objects in this class
         world->DestroyBody(((b2Body *)theBrick->b2ShapePtr));

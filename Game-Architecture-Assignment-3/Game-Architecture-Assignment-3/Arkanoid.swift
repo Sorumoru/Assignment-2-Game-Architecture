@@ -39,17 +39,15 @@ class Arkanoid: SCNScene {
         // Add the ball and the brick
         addBall()
         addPaddle()
-        addBrickGrid(rows: 5, columns: 7, spacing: 1)
         
         // Initialize the Box2D object
         box2D = CBox2D()
         //        box2D.helloWorld()  // If you want to test the HelloWorld example of Box2D
-        
         // Setup the game loop tied to the display refresh
         let updater = CADisplayLink(target: self, selector: #selector(gameLoop))
         updater.preferredFrameRateRange = CAFrameRateRange(minimum: 120.0, maximum: 120.0, preferred: 120.0)
         updater.add(to: RunLoop.main, forMode: RunLoop.Mode.default)
-        
+        addBrickGrid()
     }
     
     
@@ -81,23 +79,26 @@ class Arkanoid: SCNScene {
         
         let camera = SCNCamera() // Create Camera object
         camera.zFar = 1000
+        camera.usesOrthographicProjection = true
+        camera.orthographicScale = 100
         cameraNode.camera = camera // Give the cameraNode a camera
         // Since this is 2D, just look down the z-axis
-        cameraNode.position = SCNVector3(0, 50, 200)
+        cameraNode.position = SCNVector3(0, 30, 100)
         cameraNode.eulerAngles = SCNVector3(0, 0, 0)
         rootNode.addChildNode(cameraNode) // Add the cameraNode to the scene
         
     }
     
     
-    func addBrickGrid(rows: Int, columns: Int, spacing: Float) {
+    func addBrickGrid() {
         var brickPositions = [BrickPosition]()
         
+        let spacing = Float(BRICK_SPACING)
         let brickWidth: Float = Float(BRICK_WIDTH)
         let brickHeight: Float = Float(BRICK_HEIGHT)
         
-        let totalWidth = Float(columns) * brickWidth + Float(columns - 1) * spacing
-        let totalHeight = Float(rows) * brickHeight + Float(rows - 1) * spacing
+        let totalWidth = Float(NUM_COLUMNS) * brickWidth + Float(NUM_COLUMNS - 1) * spacing
+        let totalHeight = Float(NUM_ROWS) * brickHeight + Float(NUM_ROWS - 1) * spacing
         
         let startX: Float = -(totalWidth / 2)
         let startY: Float = (totalHeight / 2) + 100
@@ -105,15 +106,16 @@ class Arkanoid: SCNScene {
         for row in 0..<NUM_ROWS {
             for column in 0..<NUM_COLUMNS {
                 let brick = SCNNode(geometry: SCNBox(width: CGFloat(brickWidth), height: CGFloat(brickHeight), length: 1, chamferRadius: 0))
-                brick.name = "Brick"
+                brick.name = "Brick (\(row), \(column))"
                 brick.geometry?.firstMaterial?.diffuse.contents = UIColor.red
+                let brickPos = UnsafePointer(box2D.getObject(brick.name))
+//                let x = startX + Float(column) * (brickWidth + spacing)
+//                let y = startY - Float(row) * (brickHeight + spacing)
+                brick.position.x = (brickPos?.pointee.loc.x)!
+                brick.position.y = (brickPos?.pointee.loc.y)!
+                //brick.position = SCNVector3(x, y, 0)
                 
-                let x = startX + Float(column) * (brickWidth + spacing)
-                let y = startY - Float(row) * (brickHeight + spacing)
-                
-                brick.position = SCNVector3(x, y, 0)
-                
-                brickPositions.append(BrickPosition(x: x, y: y))
+                //brickPositions.append(BrickPosition(x: x, y: y))
                 
                 rootNode.addChildNode(brick)
             }
