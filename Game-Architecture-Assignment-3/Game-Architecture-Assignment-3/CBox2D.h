@@ -53,11 +53,13 @@ struct PhysicsObject {
 -(void) HelloWorld; // Basic Hello World! example from Box2D
 
 -(void) LaunchBall;                                                         // launch the ball
+-(void) MoveBall:(float)xCoordinate andY:(float)yCoordinate;                // move the ball directly, used at game start to move with the paddle
 -(void) Update:(float)elapsedTime;                                          // update the Box2D engine
 -(void) RegisterHit;                                                        // Register when the ball hits the brick
 -(void) AddObject:(char *)name newObject:(struct PhysicsObject *)newObj;    // Add a new physics object
 -(struct PhysicsObject *) GetObject:(const char *)name;                     // Get a physics object by name
 -(void) Reset;                                                              // Reset Box2D
+@property (nonatomic, assign) BOOL ballLaunched;
 
 @end
 
