@@ -36,10 +36,18 @@ class GameViewController: UIViewController {
         tapGesture.numberOfTapsRequired = 2
         scnView.addGestureRecognizer(tapGesture)
         
+        // Add pan gesture recognizer for paddle movement
+        let panGesture = UIPanGestureRecognizer(target: self, action: #selector(handlePan(_:)))
+        scnView.addGestureRecognizer(panGesture)
     }
     
     @objc
     func handleTap(_ gestureRecognize: UIGestureRecognizer) {
         scene.handleDoubleTap()
+    }
+    
+    @objc
+        func handlePan(_ gestureRecognizer: UIPanGestureRecognizer) {
+        scene.handlePanGesture(gestureRecognizer)
     }
 }

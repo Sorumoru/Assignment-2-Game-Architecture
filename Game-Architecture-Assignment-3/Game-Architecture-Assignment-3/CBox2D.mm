@@ -94,7 +94,7 @@ public:
 @end
 
 @implementation CBox2D
-
+@synthesize ballLaunched;
 // initializing, adding the ball and brick objects here - Jun
 - (instancetype)init
 {
@@ -192,19 +192,7 @@ public:
     struct PhysicsObject *theBrick = physicsObjects[std::string("Brick")];
     struct PhysicsObject *theBall = physicsObjects["Ball"];
     
-    // Check here if we need to launch the ball
-    //  and if so, use ApplyLinearImpulse() and SetActive(true)
-    if (ballLaunched)
-    {
-        
-        // Apply a force (since the ball is set up not to be affected by gravity)
-        ((b2Body *)theBall->b2ShapePtr)->ApplyLinearImpulse(b2Vec2(0, BALL_VELOCITY),
-                                                            ((b2Body *)theBall->b2ShapePtr)->GetPosition(),
-                                                            true);
-        ((b2Body *)theBall->b2ShapePtr)->SetActive(true);
-        ballLaunched = false;
-        
-    }
+
     
     // Check if it is time yet to drop the brick, and if so call SetAwake()
     totalElapsedTime += elapsedTime;
@@ -278,9 +266,30 @@ public:
 
 -(void)LaunchBall
 {
-    // Set some flag here for processing later...
-    ballLaunched = true;
+    // Check here if we need to launch the ball
+    //  and if so, use ApplyLinearImpulse() and SetActive(true)
+    if (!ballLaunched) {
+        ballLaunched = true;
+        // Apply a force (since the ball is set up not to be affected by gravity)
+        struct PhysicsObject *theBall = physicsObjects["Ball"];
+        ((b2Body *)theBall->b2ShapePtr)->ApplyLinearImpulse(b2Vec2(0, BALL_VELOCITY),
+                                                            ((b2Body *)theBall->b2ShapePtr)->GetPosition(),
+                                                            true);
+        ((b2Body *)theBall->b2ShapePtr)->SetActive(true);
+    }
+
 }
+
+-(void)MoveBall:(float)xCoordinate andY:(float)yCoordinate {
+    // Get the PhysicsObject corresponding to the ball
+    struct PhysicsObject *theBall = [self GetObject:"Ball"];
+    
+    if (theBall && theBall->b2ShapePtr) {
+        // Update the position of the ball's Box2D body to the specified coordinates
+        ((b2Body *)theBall->b2ShapePtr)->SetTransform(b2Vec2(xCoordinate, yCoordinate), 0);
+    }
+}
+
 
 -(void) AddObject:(char *)name newObject:(struct PhysicsObject *)newObj
 {

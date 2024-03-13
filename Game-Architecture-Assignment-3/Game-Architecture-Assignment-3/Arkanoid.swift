@@ -19,6 +19,9 @@ class Arkanoid: SCNScene {
     
     private var box2D: CBox2D!                      // Points to Objective-C++ wrapper for C++ Box2D library
     
+    private var xBound: Float = 40                  // Manually set x bound for screen edges for now
+    private var paddleMoveSpeed: Float = 0.2
+    
     // Catch if initializer in init() fails
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
@@ -35,6 +38,7 @@ class Arkanoid: SCNScene {
         seeCenter()
         // Add the ball and the brick
         addBall()
+        addPaddle()
         addBrickGrid(rows: 5, columns: 7, spacing: 1)
         
         // Initialize the Box2D object
@@ -129,6 +133,20 @@ class Arkanoid: SCNScene {
         
     }
     
+    func addPaddle() {
+        let paddleWidth: CGFloat = 15.0
+        let paddleHeight: CGFloat = 3.0
+        let paddleDepth: CGFloat = 1.0
+        
+        let paddleGeometry = SCNBox(width: paddleWidth, height: paddleHeight, length: paddleDepth, chamferRadius: 0)
+        let paddleNode = SCNNode(geometry: paddleGeometry)
+        paddleNode.name = "Paddle"
+        paddleNode.geometry?.firstMaterial?.diffuse.contents = UIColor.blue
+        
+        paddleNode.position = SCNVector3(Int(BALL_POS_X), Int(BALL_POS_Y) - Int(2 * BALL_RADIUS), 0)
+        
+        rootNode.addChildNode(paddleNode)
+    }
     
     // Simple game loop that gets called each frame
     @MainActor
@@ -150,11 +168,26 @@ class Arkanoid: SCNScene {
         // Update Box2D physics simulation
         box2D.update(Float(elapsedTime))
         
-        // Get ball position and update ball node
+        // Ensure ball and paddle nodes exist
+        guard let theBall = rootNode.childNode(withName: "Ball", recursively: true),
+              let paddleNode = rootNode.childNode(withName: "Paddle", recursively: true) else {
+            return
+        }
         let ballPos = UnsafePointer(box2D.getObject("Ball"))
-        let theBall = rootNode.childNode(withName: "Ball", recursively: true)
-        theBall?.position.x = (ballPos?.pointee.loc.x)!
-        theBall?.position.y = (ballPos?.pointee.loc.y)!
+        if (box2D.ballLaunched)
+        {
+            // Get ball position and update ball node
+            theBall.position.x = (ballPos?.pointee.loc.x)!
+            theBall.position.y = (ballPos?.pointee.loc.y)!
+        } else {
+            // Move the ball with the paddle and set the box2D ball position directly
+            theBall.position.x = paddleNode.position.x
+            theBall.position.y = paddleNode.position.y + BALL_RADIUS * 2
+            box2D.moveBall(theBall.position.x, andY: theBall.position.y)
+        }
+        
+        
+        
         //        print("Ball pos: \(String(describing: theBall?.position.x)) \(String(describing: theBall?.position.y))")
         
         // Get brick position and update brick node
@@ -185,6 +218,30 @@ class Arkanoid: SCNScene {
         
     }
     
+    @objc func handlePanGesture(_ gestureRecognizer: UIPanGestureRecognizer) {
+        guard let paddleNode = rootNode.childNode(withName: "Paddle", recursively: true) else {
+            return // Ensure paddle node exists
+        }
+        
+        let translation = gestureRecognizer.translation(in: gestureRecognizer.view)
+        let translationX = Float(translation.x)
+        
+        // Calculate the new position of the paddle
+        let newPositionX = paddleNode.position.x + translationX * paddleMoveSpeed
+
+        // Set manual clamp values here
+        let minX: Float = -xBound
+        let maxX: Float = xBound
+        
+        // Clamp the new position within the manual clamp values
+        let clampedPositionX = min(max(minX, newPositionX), maxX)
+        
+        // Apply the clamped position
+        paddleNode.position.x = clampedPositionX
+        
+        // Reset the translation of the gesture recognizer
+        gestureRecognizer.setTranslation(.zero, in: gestureRecognizer.view)
+    }
     
     // Function to reset the physics (reset Box2D and reset the brick)
     @MainActor
