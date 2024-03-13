@@ -164,23 +164,7 @@ public:
            char objName[50]; // Adjust the size as needed
            snprintf(objName, sizeof(objName), "Brick (%d, %d)", row, column);
            printf("Object name: %s\n", objName);
-           //char *objName = strdup("Bricky");
            [self AddObject:objName newObject:newObj];
-//           b2BodyDef bodyDef;
-//           bodyDef.type = b2_staticBody;
-//           bodyDef.position.Set(BRICK_POS_X + column * (BRICK_WIDTH + BRICK_SPACING), BRICK_POS_Y - row * (BRICK_HEIGHT + BRICK_SPACING));
-//           b2Body* body = world->CreateBody(&bodyDef);
-//           
-//           b2PolygonShape boxShape;
-//           boxShape.SetAsBox(BRICK_WIDTH / 2.0f, BRICK_HEIGHT / 2.0f);
-//           
-//           b2FixtureDef fixtureDef;
-//           fixtureDef.shape = &boxShape;
-//           fixtureDef.density = 1.0f;
-//           fixtureDef.friction = 0.3f;
-//           
-//           body->CreateFixture(&fixtureDef);
-           
        }
    }
 }
@@ -192,13 +176,6 @@ public:
     struct PhysicsObject *theBrick = physicsObjects[std::string("Brick")];
     struct PhysicsObject *theBall = physicsObjects["Ball"];
     
-
-    
-    // Check if it is time yet to drop the brick, and if so call SetAwake()
-    totalElapsedTime += elapsedTime;
-    if ((totalElapsedTime > BRICK_WAIT) && theBrick && theBrick->b2ShapePtr) {
-        ((b2Body *)theBrick->b2ShapePtr)->SetAwake(true);
-    }
     
     // Use these lines for debugging the brick and ball positions
     //    if (theBrick)
@@ -216,12 +193,6 @@ public:
     // If the last collision test was positive, stop the ball and destroy the brick
     if (ballHitBrick)
     {
-        
-        // Stop the ball and make sure it is not affected by forces
-        //((b2Body *)theBall->b2ShapePtr)->SetLinearVelocity(b2Vec2(0, 0));
-        //((b2Body *)theBall->b2ShapePtr)->SetAngularVelocity(0);
-        //((b2Body *)theBall->b2ShapePtr)->SetAwake(false);
-        //((b2Body *)theBall->b2ShapePtr)->SetActive(false);
         
         // Destroy the brick from Box2D and related objects in this class
         world->DestroyBody(((b2Body *)theBrick->b2ShapePtr));

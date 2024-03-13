@@ -32,6 +32,7 @@
 #define BRICK_SPACING       1
 
 
+
 // You can define other object types here
 typedef enum { ObjTypeBox=0, ObjTypeCircle=1 } ObjectType;
 

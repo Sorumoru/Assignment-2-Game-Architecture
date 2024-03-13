@@ -80,10 +80,10 @@ class Arkanoid: SCNScene {
         let camera = SCNCamera() // Create Camera object
         camera.zFar = 1000
         camera.usesOrthographicProjection = true
-        camera.orthographicScale = 100
+        camera.orthographicScale = 150
         cameraNode.camera = camera // Give the cameraNode a camera
         // Since this is 2D, just look down the z-axis
-        cameraNode.position = SCNVector3(0, 30, 100)
+        cameraNode.position = SCNVector3(0, 100, 100)
         cameraNode.eulerAngles = SCNVector3(0, 0, 0)
         rootNode.addChildNode(cameraNode) // Add the cameraNode to the scene
         
@@ -91,7 +91,7 @@ class Arkanoid: SCNScene {
     
     
     func addBrickGrid() {
-        var brickPositions = [BrickPosition]()
+        _ = [BrickPosition]()
         
         let spacing = Float(BRICK_SPACING)
         let brickWidth: Float = Float(BRICK_WIDTH)
