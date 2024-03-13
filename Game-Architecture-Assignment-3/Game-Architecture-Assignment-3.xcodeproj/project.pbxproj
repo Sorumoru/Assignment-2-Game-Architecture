@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0E76A6932BA258CA00C881AE /* ArkanoidView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E76A6922BA258CA00C881AE /* ArkanoidView.swift */; };
 		FBD1607D2B9BC4F000420767 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBD1607C2B9BC4F000420767 /* AppDelegate.swift */; };
 		FBD1607F2B9BC4F000420767 /* art.scnassets in Resources */ = {isa = PBXBuildFile; fileRef = FBD1607E2B9BC4F000420767 /* art.scnassets */; };
 		FBD160812B9BC4F000420767 /* GameViewControllerShip.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBD160802B9BC4F000420767 /* GameViewControllerShip.swift */; };
@@ -85,6 +86,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		0E76A6922BA258CA00C881AE /* ArkanoidView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArkanoidView.swift; sourceTree = "<group>"; };
 		FBD160792B9BC4F000420767 /* Game-Architecture-Assignment-3.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Game-Architecture-Assignment-3.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		FBD1607C2B9BC4F000420767 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		FBD1607E2B9BC4F000420767 /* art.scnassets */ = {isa = PBXFileReference; lastKnownFileType = wrapper.scnassets; path = art.scnassets; sourceTree = "<group>"; };
@@ -250,6 +252,7 @@
 				FBD161DB2B9BC7EB00420767 /* CBox2D.mm */,
 				FBD161E32B9BC85300420767 /* Game-Architecture-Assignment-3-Bridging-Header.h */,
 				FBD161DC2B9BC7EB00420767 /* Arkanoid.swift */,
+				0E76A6922BA258CA00C881AE /* ArkanoidView.swift */,
 				FBD1607C2B9BC4F000420767 /* AppDelegate.swift */,
 				FBD1607E2B9BC4F000420767 /* art.scnassets */,
 				FBD160802B9BC4F000420767 /* GameViewControllerShip.swift */,
@@ -575,6 +578,7 @@
 				FBD161C92B9BC7D500420767 /* b2Settings.cpp in Sources */,
 				FBD161AD2B9BC7D500420767 /* b2Fixture.cpp in Sources */,
 				FBD161C52B9BC7D500420767 /* b2ContactManager.cpp in Sources */,
+				0E76A6932BA258CA00C881AE /* ArkanoidView.swift in Sources */,
 				FBD161C22B9BC7D500420767 /* b2PulleyJoint.cpp in Sources */,
 				FBD161D72B9BC7D500420767 /* b2CollideEdge.cpp in Sources */,
 				FBD161CB2B9BC7D500420767 /* b2StackAllocator.cpp in Sources */,

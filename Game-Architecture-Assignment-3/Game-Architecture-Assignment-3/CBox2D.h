@@ -27,6 +27,7 @@
 #define BALL_POS_Y            5
 #define BALL_RADIUS            3.0f
 #define BALL_VELOCITY        10000.0f
+#define BALL_OUT_OF_BOUNDS_Y    (-10.0f)
 
 #define PADDLE_WIDTH        15.0f
 #define PADDLE_HEIGHT       3.0f
@@ -83,7 +84,7 @@ struct PhysicsObject {
 -(void) RegisterHitWithString:(NSString *)physicsObjName;                   // Register when the ball hits the brick
 -(void) AddObject:(char *)name newObject:(struct PhysicsObject *)newObj;    // Add a new physics object
 -(struct PhysicsObject *) GetObject:(const char *)name;                     // Get a physics object by name
--(void) Reset;                                                              // Reset Box2D
+-(void) Reset:(int)numLives;                                                              // Reset Box2D
 @property (nonatomic, assign) BOOL ballLaunched;
 @property (nonatomic, strong) NSMutableArray *hitStrings;  // List of hit strings
 
