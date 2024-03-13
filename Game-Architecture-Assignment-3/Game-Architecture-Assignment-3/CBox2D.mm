@@ -168,8 +168,8 @@ public:
    for (int row = 0; row < NUM_ROWS; row++) {
        for (int column = 0; column < NUM_COLUMNS; column++) {
            struct PhysicsObject *newObj = new struct PhysicsObject;
-           newObj->loc.x = BRICK_POS_X + column * (BRICK_WIDTH + BRICK_SPACING);
-           newObj->loc.y = BRICK_POS_Y - row * (BRICK_HEIGHT + BRICK_SPACING);
+           newObj->loc.x = -25 + BRICK_POS_X + column * (BRICK_WIDTH + BRICK_SPACING);
+           newObj->loc.y = 100 + BRICK_POS_Y - row * (BRICK_HEIGHT + BRICK_SPACING);
            newObj->objType = ObjTypeBox;
            // Create a unique name for each brick using row and column indices
            char objName[50]; // Adjust the size as needed
