@@ -281,7 +281,13 @@ public:
         ballLaunched = true;
         // Apply a force (since the ball is set up not to be affected by gravity)
         struct PhysicsObject *theBall = physicsObjects["Ball"];
-        ((b2Body *)theBall->b2ShapePtr)->ApplyLinearImpulse(b2Vec2(BALL_VELOCITY/3, BALL_VELOCITY),
+        // Generate a random number between 0 and 1
+        float randomFactor = static_cast<float>(rand()) / static_cast<float>(RAND_MAX);
+
+        // Scale the random number to fit the range [-3, 3]
+        float scaledRandom = (randomFactor * 6) - 3;
+        
+        ((b2Body *)theBall->b2ShapePtr)->ApplyLinearImpulse(b2Vec2(scaledRandom * 1000, BALL_VELOCITY),
                                                             ((b2Body *)theBall->b2ShapePtr)->GetPosition(),
                                                             true);
         ((b2Body *)theBall->b2ShapePtr)->SetActive(true);
