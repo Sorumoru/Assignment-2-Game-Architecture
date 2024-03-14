@@ -54,7 +54,6 @@ public:
             // Assuming fixtureA->GetBody()->GetUserData() returns a pointer to a char* representing the name
             char* name = (char*)(fixtureA->GetUserData());
             NSString *userDataString = [NSString stringWithUTF8String:name];
-            printf("%s\n", name);
             // Get the PhysicsObject as the user data, and then the CBox2D object in that struct
             // This is needed because this handler may be running in a different thread and this
             //  class does not know about the CBox2D that's running the physics
@@ -94,7 +93,8 @@ public:
 
     // Logit for this particular "game"
     bool ballHitBrick;  // register that the ball hit the break
-        bool ballLaunched;  // register that the user has launched the ball
+    bool ballLaunched;  // register that the user has launched the ball
+    int score;
     
 }
 @end
@@ -121,6 +121,8 @@ public:
 
         contactListener = new CContactListener();
         world->SetContactListener(contactListener);
+        
+        score = 0;
         
         struct PhysicsObject *newObj = new struct PhysicsObject;
         char *objName = strdup("");
@@ -211,6 +213,10 @@ public:
     }
 }
 
+-(int) GetScore {
+    return score;
+}
+
 -(void)Update:(float)elapsedTime
 {
     
@@ -242,6 +248,7 @@ public:
             world->DestroyBody(((b2Body *)destroyThis->b2ShapePtr));
             delete destroyThis;
             physicsObjects.erase(str);
+            score += 1;
         }
     }
     
@@ -282,6 +289,7 @@ public:
     }
 
 }
+
 
 -(void)UpdateBallPosition:(float)xCoordinate andY:(float)yCoordinate {
     // Get the PhysicsObject corresponding to the ball
@@ -410,22 +418,25 @@ public:
     {
         return;
     }
-    // Look up the brick, and if it exists, destroy it and delete it
-    struct PhysicsObject *theBrick = physicsObjects["Brick"];
-    if (theBrick) {
-        world->DestroyBody(((b2Body *)theBrick->b2ShapePtr));
-        delete theBrick;
-        theBrick = nullptr;
-        physicsObjects.erase("Brick");
+    score = 0;
+    for (int row = 0; row < NUM_ROWS; row++) {
+        for (int column = 0; column < NUM_COLUMNS; column++) {
+            // ignore the damn warning!
+            char *objName = strdup("");
+            // IDK ABOUT THE WARNING RAAAAAAH - Jun
+            sprintf(objName, "Brick (%d, %d)", row, column);
+            // look up the brick with this name, then delete it
+            struct PhysicsObject *brick = physicsObjects[objName];
+            if (brick) {
+                world->DestroyBody(((b2Body *)brick->b2ShapePtr));
+                delete brick;
+                brick = nullptr;
+                physicsObjects.erase(objName);
+            }
+        }
     }
-    
-    // Create a new brick object
-    theBrick = new struct PhysicsObject;
-    theBrick->loc.x = BRICK_POS_X;
-    theBrick->loc.y = BRICK_POS_Y;
-    theBrick->objType = ObjTypeBox;
-    char *objName = strdup("Brick");
-    [self AddObject:objName newObject:theBrick];
+    // recreate the Bricks
+    [self createBrickPhysics];
     
     // Look up the ball object and re-initialize the position, etc.
     struct PhysicsObject *theBall = physicsObjects["Ball"];

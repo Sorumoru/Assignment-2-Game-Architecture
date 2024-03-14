@@ -159,6 +159,14 @@ class Arkanoid: SCNScene {
     
     func resetLives() {
         livesLeft = numLives
+        for row in 0..<NUM_ROWS {
+            for column in 0..<NUM_COLUMNS {
+                let brickName = "Brick (\(row), \(column))"
+                let brickPos = UnsafePointer(box2D.getObject(brickName))
+                let theBrick = rootNode.childNode(withName: brickName, recursively: true)
+                theBrick?.isHidden = false
+            }
+        }
         gameView!.updateLivesLabel(with: livesLeft)
     }
     
@@ -206,11 +214,12 @@ class Arkanoid: SCNScene {
         
         if (theBall.position.y < BALL_OUT_OF_BOUNDS_Y) {
             decrementLives()
-            box2D.reset(Int32(numLives))
-            if (numLives <= 0) {
+            box2D.reset(Int32(livesLeft))
+            if (livesLeft <= 0) {
                 resetLives()
             }
         }
+        
         
         // Update paddle position to match its Box2D physics object
         let paddlePos = UnsafePointer(box2D.getObject("Paddle"))
@@ -218,6 +227,8 @@ class Arkanoid: SCNScene {
             paddleNode.position.x = paddlePos.pointee.loc.x
             paddleNode.position.y = paddlePos.pointee.loc.y
         }
+        
+        gameView!.updateScoreLabel(with: Int(box2D.getScore()));
         
         for row in 0..<NUM_ROWS {
             for column in 0..<NUM_COLUMNS {
