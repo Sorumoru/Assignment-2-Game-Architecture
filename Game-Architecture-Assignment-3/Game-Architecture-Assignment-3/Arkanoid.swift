@@ -215,7 +215,7 @@ class Arkanoid: SCNScene {
         if (theBall.position.y < BALL_OUT_OF_BOUNDS_Y) {
             decrementLives()
             box2D.reset(Int32(livesLeft))
-            if (livesLeft <= 0) {
+            if (livesLeft < 0) {
                 resetLives()
             }
         }

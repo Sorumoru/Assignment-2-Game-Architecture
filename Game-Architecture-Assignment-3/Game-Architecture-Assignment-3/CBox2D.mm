@@ -413,7 +413,7 @@ public:
     UpdatePaddlePosition:(BALL_POS_X);
     [self UpdateBallPosition:BALL_POS_X andY:BALL_POS_Y];
     ballLaunched = false;
-    if (numLives > 0)
+    if (numLives >= 0)
     {
         return;
     }
