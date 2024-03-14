@@ -241,7 +241,6 @@ public:
     //std::sort(hitLists.begin(), hitLists.end());
     while (!hitLists.empty()) {
         std::string str = hitLists.front();
-        printf("destroying this %s\n", str.c_str());
         struct PhysicsObject *destroyThis = physicsObjects[str];
         hitLists.pop(); // Remove the front element
         if (destroyThis->objType == ObjTypeBox) {
@@ -348,8 +347,8 @@ public:
             //printf("adding %s", name);
             fixtureDef.shape = &dynamicBox;
             fixtureDef.density = 1.0f;
-            fixtureDef.friction = 0.3f;
-            fixtureDef.restitution = 1.0f;
+            fixtureDef.friction = 0.0f;
+            fixtureDef.restitution = 0.0f;
             
             break;
             
@@ -358,7 +357,7 @@ public:
             circle.m_radius = BALL_RADIUS;
             fixtureDef.shape = &circle;
             fixtureDef.density = 1.0f;
-            fixtureDef.friction = 0.3f;
+            fixtureDef.friction = 0.0f;
             fixtureDef.restitution = 1.0f;
             theObject->SetGravityScale(0.0f);
             
@@ -368,7 +367,7 @@ public:
             dynamicBox.SetAsBox(PADDLE_WIDTH/2, PADDLE_HEIGHT/2);
             fixtureDef.shape = &dynamicBox;
             fixtureDef.density = 1.0f;
-            fixtureDef.friction = 0.3f;
+            fixtureDef.friction = 0.0f;
             fixtureDef.restitution = 0.0f;
             
             break;
@@ -377,7 +376,7 @@ public:
             dynamicBox.SetAsBox(WALL_THICKNESS/2, WALL_HEIGHT/2);
             fixtureDef.shape = &dynamicBox;
             fixtureDef.density = 1.0f;
-            fixtureDef.friction = 0.3f;
+            fixtureDef.friction = 0.0f;
             fixtureDef.restitution = 0.0f;
             
             break;
@@ -386,7 +385,7 @@ public:
             dynamicBox.SetAsBox(TOP_WALL_WIDTH/2, WALL_THICKNESS/2);
             fixtureDef.shape = &dynamicBox;
             fixtureDef.density = 1.0f;
-            fixtureDef.friction = 0.3f;
+            fixtureDef.friction = 0.0f;
             fixtureDef.restitution = 0.0f;
             
             break;
