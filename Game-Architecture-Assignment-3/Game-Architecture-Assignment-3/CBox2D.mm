@@ -200,8 +200,8 @@ public:
     for (int row = 0; row < NUM_ROWS; row++) {
         for (int column = 0; column < NUM_COLUMNS; column++) {
             newObj = new struct PhysicsObject;
-            newObj->loc.x = -25 + BRICK_POS_X + column * (BRICK_WIDTH + BRICK_SPACING);
-            newObj->loc.y = 100 + BRICK_POS_Y - row * (BRICK_HEIGHT + BRICK_SPACING);
+            newObj->loc.x = BRICK_START_X + BRICK_POS_X + column * (BRICK_WIDTH + BRICK_SPACING);
+            newObj->loc.y = BRICK_START_Y + BRICK_POS_Y - row * (BRICK_HEIGHT + BRICK_SPACING);
             newObj->objType = ObjTypeBox;
             // Create a unique name for each brick using row and column indices
             // ignore the damn warning!

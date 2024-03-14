@@ -34,9 +34,11 @@
 #define PADDLE_START_X      200.0f
 #define PADDLE_START_Y      100.0f
 
-#define NUM_ROWS            5
+#define NUM_ROWS            10
 #define NUM_COLUMNS         7
 #define BRICK_SPACING       1
+#define BRICK_START_X       -32.5f
+#define BRICK_START_Y       100
 
 #define X_BOUND             65          // Width (x-value) from center of screen (0,0)
 #define Y_BOUND             225         // Height (y-value) from center of screen (0,0)
